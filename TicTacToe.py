@@ -1,8 +1,8 @@
 class TicTacToe:
     def __init__(self) -> None:
         self.board = [" " for _ in range(9)]
-        self.human = "O"
-        self.ai = "X"
+        self.human_player = "O"
+        self.ai_player = "X"
 
     def print_board(self) -> None:
         for i in range(0, 9, 3):
@@ -48,6 +48,50 @@ class TicTacToe:
         """Check if the game is over"""
         return self.check_winner() or self.is_board_full()
         return False
+    
+    def minimax(self, is_maximizing):
+        #Implementing the base cases
+        winner = self.check_winner()
+        if winner == self.ai_player:
+            return 10
+        if winner == self.human_player:
+            return -10
+        if self.is_board_full():
+            return 0
+
+        if is_maximizing:
+            best_score = float("-inf")
+            for move in self.available_moves():
+                self.board[move] = self.ai_player
+                score = self.minimax(False)
+                self.board[move] = " "
+                best_score = max(score, best_score)
+            return best_score
+        
+        else:
+            best_score = float("inf")
+            for move in self.available_moves():
+                self.board[move] = self.human_player
+                score = self.minimax(True)
+                self.board[move] = " "
+                best_score = min(score, best_score)
+            return best_score
+    
+    def get_best_move(self):
+        """Find the best move for AI using minimax"""
+        best_score = float("-inf")
+        best_move = None
+
+        for move in self.available_moves():
+            self.board[move] = self.ai_player
+            score = self.minimax(False)
+            self.board[move] = " "
+
+            if score > best_score:
+                best_score = score
+                best_move = move
+        
+        return best_move
 
 # if __name__ == "__main__":
 #     game = TicTacToe()
